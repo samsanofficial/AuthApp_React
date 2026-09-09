@@ -23,6 +23,11 @@ interface ServerErrorBody {
 }
 
 export function toApiError(error: unknown): ApiError {
+  // The response interceptor already converts failures, so a second pass here
+  // must not re-wrap them: an ApiError has no `.response` and would otherwise be
+  // misreported as a network outage.
+  if (error instanceof ApiError) return error;
+
   const axiosLike = error as {
     response?: { status?: number; data?: ServerErrorBody };
     code?: string;
