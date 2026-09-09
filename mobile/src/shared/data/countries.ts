@@ -151,3 +151,54 @@ export const DEFAULT_COUNTRY_CODE = 'QA';
 export function findCountry(code: string): Country | undefined {
   return countries.find((country) => country.code === code);
 }
+
+// National number lengths (excluding the dial code) for the countries most
+// likely to be used here. Anything not listed falls back to the E.164 bounds.
+const NATIONAL_LENGTHS: Record<string, [number, number]> = {
+  QA: [8, 8],
+  AE: [9, 9],
+  SA: [9, 9],
+  KW: [8, 8],
+  BH: [8, 8],
+  OM: [8, 8],
+  IN: [10, 10],
+  US: [10, 10],
+  CA: [10, 10],
+  GB: [10, 10],
+  AU: [9, 9],
+  DE: [10, 11],
+  FR: [9, 9],
+  ES: [9, 9],
+  IT: [9, 10],
+  NL: [9, 9],
+  PK: [10, 10],
+  BD: [10, 10],
+  LK: [9, 9],
+  NP: [10, 10],
+  PH: [10, 10],
+  ID: [9, 12],
+  MY: [9, 10],
+  SG: [8, 8],
+  EG: [10, 10],
+  ZA: [9, 9],
+  NG: [10, 10],
+  KE: [9, 9],
+  TR: [10, 10],
+  RU: [10, 10],
+  CN: [11, 11],
+  JP: [10, 10],
+  KR: [9, 10],
+  BR: [10, 11],
+};
+
+// E.164 caps a full number at 15 digits including the dial code.
+const E164_MAX_DIGITS = 15;
+
+export function phoneLengthRange(countryCode: string): [number, number] {
+  const known = NATIONAL_LENGTHS[countryCode];
+  if (known) return known;
+
+  const country = findCountry(countryCode);
+  const dialDigits = (country?.dialCode ?? '').replace(/\D/g, '').length;
+  return [4, Math.max(4, E164_MAX_DIGITS - dialDigits)];
+}

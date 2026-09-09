@@ -18,7 +18,11 @@ import { CountryPicker, PrimaryButton, TextField } from '../../../shared/ui';
 import type { TextFieldRef } from '../../../shared/ui/TextField';
 import { LockIcon, MailIcon, PhoneIcon, UserIcon } from '../../../shared/ui/icons';
 import { ApiError } from '../../../shared/api/ApiError';
-import { DEFAULT_COUNTRY_CODE, findCountry } from '../../../shared/data/countries';
+import {
+  DEFAULT_COUNTRY_CODE,
+  findCountry,
+  phoneLengthRange,
+} from '../../../shared/data/countries';
 import type { AuthStackParamList } from '../../../app/navigation/types';
 import { registerSchema, type RegisterFormValues } from '../schemas/auth.schemas';
 import { useAuth } from '../store/AuthContext';
@@ -58,7 +62,9 @@ export function RegisterScreen({ navigation }: Props) {
     reValidateMode: 'onChange',
   });
 
-  const selectedCountry = findCountry(watch('countryCode'));
+  const countryCode = watch('countryCode');
+  const selectedCountry = findCountry(countryCode);
+  const [, maxPhoneDigits] = phoneLengthRange(countryCode);
 
   const onSubmit = async (values: RegisterFormValues) => {
     setSubmitting(true);
@@ -183,10 +189,13 @@ export function RegisterScreen({ navigation }: Props) {
                   </View>
                 }
                 value={value}
-                onChangeText={onChange}
+                // phone-pad offers + * # and spaces; strip anything that is not
+                // a digit so the field can only ever hold a valid number.
+                onChangeText={(text) => onChange(text.replace(/[^0-9]/g, ''))}
                 onBlur={onBlur}
                 error={errors.phoneNumber?.message}
                 keyboardType="phone-pad"
+                maxLength={maxPhoneDigits}
                 returnKeyType="next"
                 onSubmitEditing={() => emailRef.current?.focus()}
               />

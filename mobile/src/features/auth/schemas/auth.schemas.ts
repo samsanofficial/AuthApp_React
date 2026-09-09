@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { findCountry, phoneLengthRange } from '../../../shared/data/countries';
 
 // Mirrors the server rules so the user is corrected before a request is sent.
 export const loginSchema = z.object({
@@ -33,7 +34,8 @@ export const registerSchema = z
     phoneNumber: z
       .string()
       .trim()
-      .regex(/^\+?[0-9]{6,19}$/, 'Enter a valid phone number'),
+      .min(1, 'Phone number is required')
+      .regex(/^[0-9]+$/, 'Phone number can only contain digits'),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters')
@@ -45,6 +47,22 @@ export const registerSchema = z
   .refine((values) => values.password === values.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
+  })
+  // Length depends on the chosen country, so this runs on the whole object
+  // rather than on the phone field alone.
+  .superRefine((values, ctx) => {
+    if (!/^[0-9]+$/.test(values.phoneNumber)) return;
+
+    const [min, max] = phoneLengthRange(values.countryCode);
+    const length = values.phoneNumber.length;
+    if (length >= min && length <= max) return;
+
+    const expected = min === max ? `${min} digits` : `${min}-${max} digits`;
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['phoneNumber'],
+      message: `${findCountry(values.countryCode)?.name ?? 'This country'} numbers are ${expected}`,
+    });
   });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;

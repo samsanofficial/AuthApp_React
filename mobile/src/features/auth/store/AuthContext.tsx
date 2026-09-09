@@ -27,12 +27,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [biometricEnabled, setBiometricEnabled] = useState(false);
   const [biometryType, setBiometryType] = useState<string | null>(null);
 
-  const applySession = useCallback(async (response: AuthResponse) => {
-    storage.setAccessToken(response.tokens.accessToken);
-    await storage.saveRefreshToken(response.tokens.refreshToken);
-    setUser(response.user);
-    setStatus('authenticated');
+  /**
+   * A device holds one biometric enrolment. If it belongs to a different
+   * account than the one signing in, it is discarded: otherwise the new user
+   * would see biometrics as "on" and the fingerprint would sign them in as the
+   * previous account.
+   */
+  const reconcileBiometricOwner = useCallback(async (userId: string) => {
+    const owner = await storage.getBiometricOwner();
+
+    if (owner && owner !== userId) {
+      await storage.clearBiometricToken();
+      setBiometricEnabled(false);
+      return;
+    }
+
+    setBiometricEnabled(Boolean(owner));
   }, []);
+
+  const applySession = useCallback(
+    async (response: AuthResponse) => {
+      storage.setAccessToken(response.tokens.accessToken);
+      await storage.saveRefreshToken(response.tokens.refreshToken);
+      setUser(response.user);
+      await reconcileBiometricOwner(response.user.id);
+      setStatus('authenticated');
+    },
+    [reconcileBiometricOwner],
+  );
 
   // Keeps the biometric token by default: signing out must not undo biometric
   // enrolment, otherwise the fingerprint could never be used to sign back in.
@@ -76,6 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!cancelled) {
           setUser(profile);
+          await reconcileBiometricOwner(profile.id);
           setStatus('authenticated');
         }
       } catch {
@@ -118,10 +141,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Mints a token dedicated to this device rather than reusing the session one,
   // so signing out (which revokes the session token) leaves biometrics working.
   const enableBiometrics = useCallback(async () => {
+    if (!user) throw new Error('Sign in before enabling biometric sign-in');
     const deviceToken = await authApi.createBiometricToken();
-    await storage.saveBiometricToken(deviceToken);
+    await storage.saveBiometricToken(user.id, deviceToken);
     setBiometricEnabled(true);
-  }, []);
+  }, [user]);
 
   const disableBiometrics = useCallback(async () => {
     const existing = await storage.getBiometricToken('Confirm to turn off biometric sign-in');
@@ -143,7 +167,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Refreshing rotated the stored token away, so mint a fresh device token to
     // replace it — again separate from the session token this call just issued.
     const nextDeviceToken = await authApi.createBiometricToken();
-    await storage.saveBiometricToken(nextDeviceToken);
+    await storage.saveBiometricToken(profile.id, nextDeviceToken);
     setUser(profile);
     setStatus('authenticated');
   }, []);
