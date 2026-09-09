@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, spacing, typography } from '../../../shared/theme';
 import { Divider, IconButton, PrimaryButton, SocialButton, TextField } from '../../../shared/ui';
+import type { TextFieldRef } from '../../../shared/ui/TextField';
 import { AppleIcon, FingerprintIcon, GoogleIcon, LockIcon, MailIcon } from '../../../shared/ui/icons';
 import { ApiError } from '../../../shared/api/ApiError';
 import type { AuthStackParamList } from '../../../app/navigation/types';
@@ -27,6 +28,7 @@ export function LoginScreen({ navigation }: Props) {
   const { login, loginWithBiometrics, biometricEnabled, biometryType } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [biometricBusy, setBiometricBusy] = useState(false);
+  const passwordRef = useRef<TextFieldRef>(null);
 
   const {
     control,
@@ -37,6 +39,9 @@ export function LoginScreen({ navigation }: Props) {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
     mode: 'onSubmit',
+    // After the first failed submit, re-check as the user types so a corrected
+    // field clears its error immediately instead of waiting for another submit.
+    reValidateMode: 'onChange',
   });
 
   const onSubmit = async (values: LoginFormValues) => {
@@ -108,6 +113,7 @@ export function LoginScreen({ navigation }: Props) {
         <ScrollView
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
@@ -132,6 +138,7 @@ export function LoginScreen({ navigation }: Props) {
                 autoComplete="email"
                 autoCorrect={false}
                 returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current?.focus()}
               />
             )}
           />
@@ -141,6 +148,7 @@ export function LoginScreen({ navigation }: Props) {
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
+                ref={passwordRef}
                 containerStyle={styles.passwordField}
                 label="Password"
                 placeholder="Enter your password"

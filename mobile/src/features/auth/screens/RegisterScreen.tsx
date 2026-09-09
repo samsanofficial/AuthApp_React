@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -15,6 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { colors, spacing, typography } from '../../../shared/theme';
 import { CountryPicker, PrimaryButton, TextField } from '../../../shared/ui';
+import type { TextFieldRef } from '../../../shared/ui/TextField';
 import { LockIcon, MailIcon, PhoneIcon, UserIcon } from '../../../shared/ui/icons';
 import { ApiError } from '../../../shared/api/ApiError';
 import { DEFAULT_COUNTRY_CODE, findCountry } from '../../../shared/data/countries';
@@ -27,6 +28,12 @@ type Props = NativeStackScreenProps<AuthStackParamList, 'Register'>;
 export function RegisterScreen({ navigation }: Props) {
   const { register } = useAuth();
   const [submitting, setSubmitting] = useState(false);
+
+  const lastNameRef = useRef<TextFieldRef>(null);
+  const phoneRef = useRef<TextFieldRef>(null);
+  const emailRef = useRef<TextFieldRef>(null);
+  const passwordRef = useRef<TextFieldRef>(null);
+  const confirmRef = useRef<TextFieldRef>(null);
 
   const {
     control,
@@ -46,6 +53,9 @@ export function RegisterScreen({ navigation }: Props) {
       confirmPassword: '',
     },
     mode: 'onSubmit',
+    // Re-check as the user types once they have submitted, so corrected fields
+    // stop showing stale errors.
+    reValidateMode: 'onChange',
   });
 
   const selectedCountry = findCountry(watch('countryCode'));
@@ -95,6 +105,7 @@ export function RegisterScreen({ navigation }: Props) {
         <ScrollView
           contentContainerStyle={styles.scroll}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
@@ -116,6 +127,7 @@ export function RegisterScreen({ navigation }: Props) {
                 error={errors.firstName?.message}
                 autoCapitalize="words"
                 returnKeyType="next"
+                onSubmitEditing={() => lastNameRef.current?.focus()}
               />
             )}
           />
@@ -125,6 +137,7 @@ export function RegisterScreen({ navigation }: Props) {
             name="lastName"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
+                ref={lastNameRef}
                 containerStyle={styles.gap}
                 label="Last Name"
                 placeholder="Enter your last name"
@@ -135,6 +148,7 @@ export function RegisterScreen({ navigation }: Props) {
                 error={errors.lastName?.message}
                 autoCapitalize="words"
                 returnKeyType="next"
+                onSubmitEditing={() => phoneRef.current?.focus()}
               />
             )}
           />
@@ -158,6 +172,7 @@ export function RegisterScreen({ navigation }: Props) {
             name="phoneNumber"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
+                ref={phoneRef}
                 containerStyle={styles.gap}
                 label="Phone Number"
                 placeholder="Enter your phone number"
@@ -173,6 +188,7 @@ export function RegisterScreen({ navigation }: Props) {
                 error={errors.phoneNumber?.message}
                 keyboardType="phone-pad"
                 returnKeyType="next"
+                onSubmitEditing={() => emailRef.current?.focus()}
               />
             )}
           />
@@ -182,6 +198,7 @@ export function RegisterScreen({ navigation }: Props) {
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
+                ref={emailRef}
                 containerStyle={styles.gap}
                 label="Email Address"
                 placeholder="Enter your email"
@@ -195,6 +212,7 @@ export function RegisterScreen({ navigation }: Props) {
                 autoComplete="email"
                 autoCorrect={false}
                 returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current?.focus()}
               />
             )}
           />
@@ -204,6 +222,7 @@ export function RegisterScreen({ navigation }: Props) {
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
+                ref={passwordRef}
                 containerStyle={styles.gap}
                 label="Password"
                 placeholder="Create a password"
@@ -215,6 +234,7 @@ export function RegisterScreen({ navigation }: Props) {
                 error={errors.password?.message}
                 autoCapitalize="none"
                 returnKeyType="next"
+                onSubmitEditing={() => confirmRef.current?.focus()}
               />
             )}
           />
@@ -224,6 +244,7 @@ export function RegisterScreen({ navigation }: Props) {
             name="confirmPassword"
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
+                ref={confirmRef}
                 containerStyle={styles.gap}
                 label="Confirm Password"
                 placeholder="Re-enter your password"
