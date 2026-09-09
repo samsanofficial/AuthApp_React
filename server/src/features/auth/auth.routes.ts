@@ -42,4 +42,10 @@ authRouter.post('/register', registerLimiter, asyncHandler(controller.register))
 authRouter.post('/login', loginLimiter, asyncHandler(controller.login));
 authRouter.post('/refresh', asyncHandler(controller.refresh));
 authRouter.post('/logout', asyncHandler(controller.logout));
+authRouter.post(
+  '/biometric/token',
+  requireAuth,
+  asyncHandler(controller.createBiometricToken),
+);
+authRouter.post('/biometric/revoke', asyncHandler(controller.revokeBiometricToken));
 authRouter.get('/me', requireAuth, asyncHandler(controller.me));

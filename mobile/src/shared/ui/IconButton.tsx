@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
+    boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.85)',
   },
   pressed: {
     borderColor: colors.primary,

@@ -61,6 +61,8 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
+    // Raised look from the design: a dark shadow cast onto the near-black canvas.
+    boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.85)',
   },
   label: {
     ...typography.button,

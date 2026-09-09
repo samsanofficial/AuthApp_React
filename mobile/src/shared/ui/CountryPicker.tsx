@@ -129,7 +129,7 @@ export function CountryPicker({
 }
 
 const styles = StyleSheet.create({
-  label: { ...typography.label, color: colors.textSecondary, marginBottom: spacing.sm },
+  label: { ...typography.label, color: colors.textLabel, marginBottom: spacing.sm },
   field: {
     flexDirection: 'row',
     alignItems: 'center',

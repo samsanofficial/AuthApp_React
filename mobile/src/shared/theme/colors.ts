@@ -1,9 +1,9 @@
 export const colors = {
-  background: '#0F0F0F',
-  surface: '#161618',
+  background: '#0B0B0C',
+  surface: '#141416',
   surfaceRaised: '#1C1C1F',
 
-  border: '#2A2A2E',
+  border: '#2C2C30',
   borderFocused: '#C9F24D',
   borderError: '#FF5A5F',
 
@@ -13,12 +13,15 @@ export const colors = {
   onPrimary: '#101010',
 
   textPrimary: '#FFFFFF',
-  textSecondary: '#9A9AA0',
+  // Field labels sit brighter than the subtitle in the design, so they get
+  // their own token rather than sharing the muted secondary grey.
+  textLabel: '#E8E8EA',
+  textSecondary: '#8E8E93',
   textMuted: '#6E6E76',
-  placeholder: '#5C5C63',
+  placeholder: '#8A8A8F',
 
   error: '#FF5A5F',
-  link: '#5B9BFF',
+  link: '#6C63FF',
 
   white: '#FFFFFF',
 } as const;

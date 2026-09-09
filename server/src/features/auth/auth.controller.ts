@@ -27,6 +27,18 @@ export async function logout(req: Request, res: Response) {
   res.status(204).send();
 }
 
+export async function createBiometricToken(req: Request, res: Response) {
+  if (!req.user) throw AppError.unauthorized('Authentication required');
+  const refreshToken = await authService.createBiometricToken(req.user.id);
+  res.status(201).json({ refreshToken });
+}
+
+export async function revokeBiometricToken(req: Request, res: Response) {
+  const { refreshToken } = refreshSchema.parse(req.body);
+  await authService.revokeBiometricToken(refreshToken);
+  res.status(204).send();
+}
+
 export async function me(req: Request, res: Response) {
   if (!req.user) throw AppError.unauthorized('Authentication required');
   const user = await authService.getProfile(req.user.id);

@@ -34,10 +34,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setStatus('authenticated');
   }, []);
 
-  const signOutLocally = useCallback(async () => {
-    await storage.clearAll();
+  // Keeps the biometric token by default: signing out must not undo biometric
+  // enrolment, otherwise the fingerprint could never be used to sign back in.
+  const signOutLocally = useCallback(async (forgetBiometrics = false) => {
+    if (forgetBiometrics) {
+      await storage.clearAll();
+      setBiometricEnabled(false);
+    } else {
+      await storage.clearSession();
+    }
     setUser(null);
-    setBiometricEnabled(false);
     setStatus('unauthenticated');
   }, []);
 
@@ -109,14 +115,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [applySession],
   );
 
+  // Mints a token dedicated to this device rather than reusing the session one,
+  // so signing out (which revokes the session token) leaves biometrics working.
   const enableBiometrics = useCallback(async () => {
-    const refreshToken = await storage.getRefreshToken();
-    if (!refreshToken) throw new Error('No active session to protect');
-    await storage.saveBiometricToken(refreshToken);
+    const deviceToken = await authApi.createBiometricToken();
+    await storage.saveBiometricToken(deviceToken);
     setBiometricEnabled(true);
   }, []);
 
   const disableBiometrics = useCallback(async () => {
+    const existing = await storage.getBiometricToken('Confirm to turn off biometric sign-in');
+    if (existing) await authApi.revokeBiometricToken(existing);
     await storage.clearBiometricToken();
     setBiometricEnabled(false);
   }, []);
@@ -128,10 +137,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const tokens = await authApi.refresh(stored);
     storage.setAccessToken(tokens.accessToken);
     await storage.saveRefreshToken(tokens.refreshToken);
-    // The stored token has now been rotated away, so replace it with the new one.
-    await storage.saveBiometricToken(tokens.refreshToken);
 
     const profile = await authApi.me();
+
+    // Refreshing rotated the stored token away, so mint a fresh device token to
+    // replace it — again separate from the session token this call just issued.
+    const nextDeviceToken = await authApi.createBiometricToken();
+    await storage.saveBiometricToken(nextDeviceToken);
     setUser(profile);
     setStatus('authenticated');
   }, []);

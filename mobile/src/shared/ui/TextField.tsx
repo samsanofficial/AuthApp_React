@@ -71,7 +71,7 @@ export const TextField = forwardRef<TextFieldRef, TextFieldProps>(function TextF
             accessibilityRole="button"
             accessibilityLabel={revealed ? 'Hide password' : 'Show password'}
           >
-            {revealed ? <EyeIcon /> : <EyeOffIcon />}
+            {revealed ? <EyeOffIcon /> : <EyeIcon />}
           </Pressable>
         ) : null}
       </View>
@@ -86,11 +86,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: spacing.sm,
+    marginBottom: 10,
   },
   label: {
     ...typography.label,
-    color: colors.textSecondary,
+    color: colors.textLabel,
   },
   field: {
     flexDirection: 'row',

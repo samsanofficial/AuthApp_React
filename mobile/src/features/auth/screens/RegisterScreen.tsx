@@ -304,5 +304,5 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl,
   },
   footerText: { ...typography.footnote, color: colors.textSecondary },
-  footerLink: { ...typography.footnote, color: colors.primary, fontWeight: '700' },
+  footerLink: { ...typography.footnoteStrong, color: colors.primary },
 });

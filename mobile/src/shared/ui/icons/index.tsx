@@ -7,7 +7,7 @@ export interface IconProps {
   color?: string;
 }
 
-export function MailIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function MailIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Rect x="2.5" y="4.5" width="19" height="15" rx="3" stroke={color} strokeWidth={1.6} />
@@ -21,7 +21,7 @@ export function MailIcon({ size = 20, color = colors.textMuted }: IconProps) {
   );
 }
 
-export function LockIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function LockIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Rect x="4" y="10.5" width="16" height="10.5" rx="3" stroke={color} strokeWidth={1.6} />
@@ -36,7 +36,7 @@ export function LockIcon({ size = 20, color = colors.textMuted }: IconProps) {
   );
 }
 
-export function EyeIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function EyeIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
@@ -50,7 +50,7 @@ export function EyeIcon({ size = 20, color = colors.textMuted }: IconProps) {
   );
 }
 
-export function EyeOffIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function EyeOffIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
@@ -71,47 +71,49 @@ export function EyeOffIcon({ size = 20, color = colors.textMuted }: IconProps) {
   );
 }
 
-export function FingerprintIcon({ size = 24, color = colors.primary }: IconProps) {
+export function FingerprintIcon({ size = 24, color = colors.textLabel }: IconProps) {
+  // Concentric ridges rather than loose strokes, so it reads as a fingerprint
+  // at the small size used inside the biometric button.
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
-        d="M12 3.5c-2.1 0-3.98.9-5.3 2.33"
+        d="M3.6 12.4a8.4 8.4 0 0 1 16.8 0v1.3"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
       />
       <Path
-        d="M4.6 8.2A8.4 8.4 0 0 0 3.7 12v1.4"
+        d="M3.7 15.6c.1-.6.2-1.3.2-1.9"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
       />
       <Path
-        d="M20.3 13.6V12a8.3 8.3 0 0 0-3.4-6.7"
+        d="M6.4 12.5a5.6 5.6 0 0 1 11.2 0v1.9c0 1.4-.2 2.7-.5 4"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
       />
       <Path
-        d="M8.3 12a3.7 3.7 0 0 1 7.4 0v1.2c0 1.6-.2 3.2-.7 4.7"
+        d="M6.4 15c0 1.9-.4 3.7-1.2 5.3"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
       />
       <Path
-        d="M12 11.8v1.9c0 2-.35 3.9-1.02 5.7"
+        d="M9.2 12.6a2.8 2.8 0 0 1 5.6 0v2.1c0 2-.3 3.9-.9 5.7"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
       />
       <Path
-        d="M5.9 16.6c.4-1.1.6-2.2.6-3.4V12a5.5 5.5 0 0 1 2.1-4.34"
+        d="M9.2 15.4c0 1.9-.3 3.7-1 5.4"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
       />
       <Path
-        d="M18 16.9c.3-1 .45-2.1.45-3.2"
+        d="M12 12.6v3.1c0 1.4-.1 2.8-.4 4.2"
         stroke={color}
         strokeWidth={1.5}
         strokeLinecap="round"
@@ -154,7 +156,7 @@ export function GoogleIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-export function ChevronDownIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function ChevronDownIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
@@ -168,7 +170,7 @@ export function ChevronDownIcon({ size = 20, color = colors.textMuted }: IconPro
   );
 }
 
-export function UserIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function UserIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Circle cx="12" cy="8.25" r="3.75" stroke={color} strokeWidth={1.6} />
@@ -182,7 +184,7 @@ export function UserIcon({ size = 20, color = colors.textMuted }: IconProps) {
   );
 }
 
-export function PhoneIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function PhoneIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Rect x="6" y="2.5" width="12" height="19" rx="3" stroke={color} strokeWidth={1.6} />
@@ -205,7 +207,7 @@ export function CheckIcon({ size = 18, color = colors.primary }: IconProps) {
   );
 }
 
-export function SearchIcon({ size = 20, color = colors.textMuted }: IconProps) {
+export function SearchIcon({ size = 20, color = colors.textSecondary }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Circle cx="11" cy="11" r="6.5" stroke={color} strokeWidth={1.6} />

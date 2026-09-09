@@ -76,6 +76,23 @@ export async function logout(refreshToken: string): Promise<void> {
   }
 }
 
+export async function createBiometricToken(): Promise<string> {
+  try {
+    const { data } = await api.post<{ refreshToken: string }>('/auth/biometric/token');
+    return data.refreshToken;
+  } catch (error) {
+    throw toApiError(error);
+  }
+}
+
+export async function revokeBiometricToken(refreshToken: string): Promise<void> {
+  try {
+    await api.post('/auth/biometric/revoke', { refreshToken });
+  } catch {
+    // Turning biometrics off locally must succeed even if the server call fails.
+  }
+}
+
 export async function me(): Promise<AuthUser> {
   try {
     const { data } = await api.get<{ user: AuthUser }>('/auth/me');

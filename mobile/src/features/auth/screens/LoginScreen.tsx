@@ -191,7 +191,7 @@ export function LoginScreen({ navigation }: Props) {
               onPress={() => void onBiometricPress()}
               disabled={biometricBusy}
             >
-              <FingerprintIcon />
+              <FingerprintIcon size={28} />
             </IconButton>
           </View>
 
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
     paddingBottom: spacing.xl,
   },
-  header: { alignItems: 'center', marginTop: spacing.xxl, marginBottom: spacing.xxl },
+  header: { alignItems: 'center', marginTop: spacing.lg, marginBottom: 30 },
   title: { ...typography.title, color: colors.textPrimary, textAlign: 'center' },
   subtitle: {
     ...typography.subtitle,
@@ -240,12 +240,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.xs,
   },
-  passwordField: { marginTop: spacing.lg },
+  passwordField: { marginTop: 18 },
   link: { ...typography.link, color: colors.link },
-  actionRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.xl },
-  loginButton: { flex: 1, marginRight: spacing.md },
-  divider: { marginVertical: spacing.xl },
-  socialGap: { marginTop: spacing.md },
+  actionRow: { flexDirection: 'row', alignItems: 'center', marginTop: 26 },
+  loginButton: { flex: 1, marginRight: 14 },
+  divider: { marginVertical: spacing.xxl },
+  socialGap: { marginTop: 14 },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -254,5 +254,5 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xxl,
   },
   footerText: { ...typography.footnote, color: colors.textSecondary },
-  footerLink: { ...typography.footnote, color: colors.primary, fontWeight: '700' },
+  footerLink: { ...typography.footnoteStrong, color: colors.primary },
 });

@@ -113,6 +113,23 @@ export async function logout(refreshToken: string): Promise<void> {
   await tokens.revokeRefreshToken(hashRefreshToken(refreshToken));
 }
 
+/**
+ * Issues an additional refresh token for biometric sign-in on this device.
+ *
+ * It must be a separate token from the session one: signing out revokes the
+ * session token, and if biometrics shared it, enabling biometrics then logging
+ * out would leave a dead token behind and the fingerprint could never sign in.
+ */
+export async function createBiometricToken(userId: string): Promise<string> {
+  const refreshToken = generateRefreshToken();
+  await tokens.storeRefreshToken(userId, hashRefreshToken(refreshToken), refreshTokenExpiry());
+  return refreshToken;
+}
+
+export async function revokeBiometricToken(refreshToken: string): Promise<void> {
+  await tokens.revokeRefreshToken(hashRefreshToken(refreshToken));
+}
+
 export async function getProfile(userId: string): Promise<PublicUser> {
   const user = await users.findById(userId);
   if (!user) throw AppError.notFound('User not found');

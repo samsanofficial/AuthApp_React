@@ -65,6 +65,16 @@ export async function getSupportedBiometry(): Promise<Keychain.BIOMETRY_TYPE | n
   return Keychain.getSupportedBiometryType();
 }
 
+/**
+ * Ends the session but deliberately keeps the biometric token, so signing out
+ * and back in with a fingerprint still works. Use clearAll only when the user
+ * turns biometrics off.
+ */
+export async function clearSession(): Promise<void> {
+  setAccessToken(null);
+  await clearRefreshToken();
+}
+
 export async function clearAll(): Promise<void> {
   setAccessToken(null);
   await Promise.all([clearRefreshToken(), clearBiometricToken()]);
