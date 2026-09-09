@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { authRouter } from './features/auth/auth.routes';
 import { healthRouter } from './features/health/health.routes';
 import { errorHandler, notFoundHandler } from './shared/middleware/errorHandler';
 
@@ -26,6 +27,7 @@ export function createApp() {
   );
 
   app.use('/api/health', healthRouter);
+  app.use('/api/auth', authRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
